@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Log meals, macros, and water against your daily nutrition targets.">
+<title>Nutrition — FitCalc</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../main.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../" aria-label="FitCalc home"><span class="brand-mark" aria-hidden="true">+</span><span>FitCalc</span></a>
+  <nav class="desktop-nav" aria-label="Main navigation"></nav>
+  <div class="topbar-right"><button class="theme-toggle" type="button" aria-label="Switch to light theme" title="Switch theme"></button><button class="menu-toggle" id="hamburger-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button></div>
+</header>
+<nav class="mobile-menu" id="mobile-menu" aria-label="More navigation" hidden></nav>
+
+<main class="page-shell nutrition-page">
+  <header class="page-heading">
+    <div><span class="page-kicker">Food and hydration</span><h1>Nutrition</h1><p>Log meals and see how they compare with your daily targets.</p></div>
+    <div class="day-navigation nutrition-day-navigation" aria-label="Choose nutrition date">
+      <button type="button" id="nutrition-previous-day" aria-label="Previous day">←</button>
+      <div class="selected-day"><strong id="nutrition-day-label">Today</strong><span id="nutrition-date"></span></div>
+      <button type="button" id="nutrition-next-day" aria-label="Next day">→</button>
+    </div>
+  </header>
+
+  <aside class="nutrition-target-notice" id="nutrition-profile-notice" hidden>
+    <p>Add your profile details to see personal calorie and macro targets.</p>
+    <a href="../profile/">Set up profile <span aria-hidden="true">→</span></a>
+  </aside>
+
+  <section class="card nutrition-overview" aria-labelledby="nutrition-totals-heading">
+    <div class="section-heading"><div><span class="section-kicker">Daily summary</span><h2 id="nutrition-totals-heading">Intake and targets</h2></div></div>
+    <div id="nutrition-totals" class="nutrition-totals">
+      <div class="nutrition-total-card"><span>Calories</span><strong id="total-calories">0 / 0</strong></div>
+      <div class="nutrition-total-card"><span>Protein</span><strong id="total-protein">0 / 0</strong></div>
+      <div class="nutrition-total-card"><span>Carbohydrates</span><strong id="total-carbs">0 / 0</strong></div>
+      <div class="nutrition-total-card"><span>Fat</span><strong id="total-fat">0 / 0</strong></div>
+      <div class="nutrition-total-card"><span>Fiber</span><strong id="total-fiber">0 / 0</strong></div>
+    </div>
+    <div class="nutrition-progress" aria-label="Progress toward nutrition targets">
+      <div class="nutrition-progress-row"><div class="nutrition-progress-header"><span>Calories</span><strong id="total-calories-progress">0%</strong></div><div class="nutrition-progress-bar" role="progressbar" aria-label="Calories" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="nutrition-progress-fill" id="calorie-progress"></div></div></div>
+      <div class="nutrition-progress-row"><div class="nutrition-progress-header"><span>Protein</span><strong id="total-protein-progress">0%</strong></div><div class="nutrition-progress-bar" role="progressbar" aria-label="Protein" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="nutrition-progress-fill" id="protein-progress"></div></div></div>
+      <div class="nutrition-progress-row"><div class="nutrition-progress-header"><span>Carbohydrates</span><strong id="total-carbs-progress">0%</strong></div><div class="nutrition-progress-bar" role="progressbar" aria-label="Carbohydrates" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="nutrition-progress-fill" id="carbs-progress"></div></div></div>
+      <div class="nutrition-progress-row"><div class="nutrition-progress-header"><span>Fat</span><strong id="total-fat-progress">0%</strong></div><div class="nutrition-progress-bar" role="progressbar" aria-label="Fat" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="nutrition-progress-fill" id="fat-progress"></div></div></div>
+      <div class="nutrition-progress-row"><div class="nutrition-progress-header"><span>Fiber</span><strong id="total-fiber-progress">0%</strong></div><div class="nutrition-progress-bar" role="progressbar" aria-label="Fiber" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="nutrition-progress-fill" id="fiber-progress"></div></div></div>
+    </div>
+  </section>
+
+  <div class="nutrition-secondary-grid">
+    <section class="card" aria-labelledby="water-heading">
+      <div class="section-heading"><div><span class="section-kicker">Hydration</span><h2 id="water-heading">Water</h2></div></div>
+      <p><strong><span id="planner-water">0.00</span> L</strong> logged · Daily target: <span id="nutrition-water-goal">4.00</span> L</p>
+      <div class="nutrition-progress-bar" role="progressbar" aria-label="Water target" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="nutrition-progress-fill" id="water-progress"></div></div>
+      <div class="button-row"><button type="button" class="primary-btn" id="add-water">Add 250 ml</button><button type="button" class="secondary-btn" id="reset-water">Reset</button></div>
+    </section>
+    <section class="card" aria-labelledby="remaining-heading">
+      <div class="section-heading"><div><span class="section-kicker">Still available</span><h2 id="remaining-heading">Remaining targets</h2></div></div>
+      <div class="nutrition-remaining">
+        <p><span>Calories</span><strong id="remaining-calories">0 kcal</strong></p>
+        <p><span>Protein</span><strong id="remaining-protein">0 g</strong></p>
+        <p><span>Carbohydrates</span><strong id="remaining-carbs">0 g</strong></p>
+        <p><span>Fat</span><strong id="remaining-fat">0 g</strong></p>
+        <p><span>Fiber</span><strong id="remaining-fiber">0 g</strong></p>
+      </div>
+    </section>
+  </div>
+
+  <div class="nutrition-log-grid">
+    <section class="card" aria-labelledby="food-entry-heading">
+      <div class="section-heading"><div><span class="section-kicker">Add an entry</span><h2 id="food-entry-heading">Food</h2></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="food-name">Food name</label><input type="text" id="food-name" autocomplete="off" placeholder="e.g. Oats"></div>
+        <div class="field"><label for="food-amount">Amount in grams</label><input type="number" id="food-amount" inputmode="decimal" placeholder="100" min="1" step="1"></div>
+        <div class="field"><label for="food-meal">Meal</label><select id="food-meal"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option></select></div>
+      </div>
+      <div class="button-row"><button type="button" class="primary-btn" id="add-food">Add to log</button><button type="button" class="secondary-btn" id="cancel-food-edit" hidden>Cancel edit</button></div>
+
+      <div class="food-api-tools">
+        <div><span class="section-kicker">Packaged food</span><h3>Search food database</h3></div>
+        <div class="field"><label for="food-database-search">Search Open Food Facts</label><div class="inline-input-action"><input type="search" id="food-database-search" placeholder="Search packaged foods" autocomplete="off"><button type="button" class="secondary-btn" id="search-food-database">Search</button></div></div>
+        <div class="field"><label for="food-barcode">Barcode lookup</label><div class="inline-input-action"><input type="text" id="food-barcode" inputmode="numeric" pattern="[0-9]*" placeholder="Enter barcode"><button type="button" class="secondary-btn" id="lookup-food-barcode">Look up</button><button type="button" class="secondary-btn" id="start-barcode-camera">Camera</button></div></div>
+        <video id="barcode-camera" class="barcode-camera" playsinline hidden aria-label="Barcode camera preview"></video>
+        <button type="button" class="secondary-btn" id="stop-barcode-camera" hidden>Stop camera</button>
+        <p id="food-api-status" class="integration-status" role="status" aria-live="polite"></p>
+        <div id="food-api-results" class="integration-results" aria-live="polite"></div>
+        <small>Product data from <a href="https://openfoodfacts.org" target="_blank" rel="noopener noreferrer">Open Food Facts</a>. Community entries may be incomplete; check package labels when accuracy matters.</small>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="food-log-heading">
+      <div class="section-heading"><div><span class="section-kicker">Selected day</span><h2 id="food-log-heading">Food log</h2></div></div>
+      <div id="food-list"><p class="empty-state"><strong>No food logged yet</strong><span>Add an item to see it here.</span></p></div>
+    </section>
+  </div>
+</main>
+<footer class="footer"><div class="footer-brand"><span class="brand-mark">+</span><strong>FitCalc</strong></div><p>Nutrition entries are saved locally in this browser. Targets are estimates based on your profile.</p></footer>
+<script src="../constants.js"></script>
+<script src="../store.js"></script>
+<script src="../script.js"></script>
+<script src="../progress.js"></script>
+<script src="../nutrition.js"></script>
+<script src="../food-api.js"></script>
+</body>
+</html>

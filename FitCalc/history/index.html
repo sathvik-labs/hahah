@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Review your logged nutrition, activity, and progress over time.">
+<title>History — FitCalc</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../main.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../" aria-label="FitCalc home"><span class="brand-mark" aria-hidden="true">+</span><span>FitCalc</span></a>
+  <nav class="desktop-nav" aria-label="Main navigation"></nav>
+  <div class="topbar-right"><button class="theme-toggle" type="button" aria-label="Switch to light theme" title="Switch theme"></button><button class="menu-toggle" id="hamburger-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button></div>
+</header>
+<nav class="mobile-menu" id="mobile-menu" aria-label="More navigation" hidden></nav>
+<main class="page-shell history-page-shell">
+  <header class="page-heading">
+    <div><span class="page-kicker">Patterns over time</span><h1>History</h1><p>Trends and daily records come from activity you have actually logged.</p></div>
+  </header>
+  <section class="history-page-content" aria-label="Progress summary and daily records">
+    <div id="history-list"><p class="empty-state">Loading your history…</p></div>
+  </section>
+</main>
+<footer class="footer"><div class="footer-brand"><span class="brand-mark">+</span><strong>FitCalc</strong></div><p>Days without activity are not added to your history.</p></footer>
+<script src="../constants.js"></script>
+<script src="../store.js"></script>
+<script src="../script.js"></script>
+<script src="../progress.js"></script>
+<script src="../history.js"></script>
+</body>
+</html>

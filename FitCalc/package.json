@@ -1,0 +1,22 @@
+{
+  "name": "fitcalc",
+  "version": "1.1.0",
+  "description": "FitCalc - Fitness tools, Made simple",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "test": "node --test"
+  },
+  "author": "Sathvik",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^43.7.3",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.fitcalc.app",
+    "productName": "FitCalc",
+    "icon": "build/icon.icns"
+  }
+}

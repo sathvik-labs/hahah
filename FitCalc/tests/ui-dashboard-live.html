@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>FitCalc dashboard live-update check</title>
+  <style>
+    body { margin: 0; padding: 24px; color: #f2f5ff; background: #101624; font: 14px/1.5 system-ui, sans-serif; }
+    h1 { margin: 0 0 12px; font-size: 24px; }
+    #results { padding: 16px; white-space: pre-wrap; border: 1px solid #34415e; border-radius: 12px; background: #182238; }
+    iframe { position: fixed; top: 0; left: -2000px; width: 1366px; height: 900px; border: 0; }
+  </style>
+</head>
+<body>
+  <h1>FitCalc dashboard live-update check</h1>
+  <pre id="results" role="status">Loading dashboard…</pre>
+  <script>
+    (function () {
+      const now = new Date();
+      const key = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + String(now.getDate()).padStart(2, "0");
+      localStorage.setItem("fitcalc_targets", JSON.stringify({ calories: 2000, protein: 100, carbs: 250, fat: 65, fiber: 25 }));
+      localStorage.setItem("fitcalc_nutrition", JSON.stringify({ [key]: { calories: 800, protein: 40, carbs: 100, fat: 30, fiber: 8, water: 0.5, foods: [] } }));
+      localStorage.setItem("fitcalc_planner", JSON.stringify({ [key]: { date: key, steps: 4000, workouts: [{ name: "Push Day", completed: false, exercises: [] }], tasks: [] } }));
+
+      const frame = document.createElement("iframe");
+      frame.title = "FitCalc live dashboard";
+      frame.src = "../index.html";
+      frame.addEventListener("load", function () {
+        const doc = frame.contentDocument;
+        const win = frame.contentWindow;
+        const checks = [];
+        function check(name, condition) { checks.push({ name: name, pass: !!condition }); }
+        const text = function (id) { return doc.getElementById(id).textContent.trim(); };
+        const suggestions = function () { return doc.getElementById("adaptive-suggestions").textContent; };
+
+        check("initial calories, protein, carbs, and fat render", text("terminal-calories") === "800" && text("terminal-protein") === "40" && text("terminal-carbs") === "100" && text("terminal-fat") === "30");
+        check("initial water, steps, and workout status render", text("terminal-water") === "0.50" && text("terminal-steps") === "4,000" && text("terminal-workout") === "0 / 1 complete");
+        check("daily progress renders as a percentage", /^\d+%$/.test(text("terminal-daily-progress")));
+        check("priority suggestions are visible on the homepage", !doc.getElementById("adaptive-panel").hidden && suggestions().includes("Prioritize protein"));
+
+        win.saveNutritionFor(key, { calories: 1600, protein: 95, carbs: 200, fat: 52, fiber: 20, water: 2.25, foods: [] });
+        win.savePlannerFor(key, { date: key, steps: 8250, workouts: [{ name: "Push Day", completed: true, exercises: [] }], tasks: [] });
+
+        check("nutrition changes update the terminal without a reload", text("terminal-calories") === "1,600" && text("terminal-protein") === "95" && text("terminal-water") === "2.25");
+        check("planner changes update steps and workout completion without a reload", text("terminal-steps") === "8,250" && text("terminal-workout") === "1 / 1 complete");
+        check("priority suggestions recalculate from current data", !suggestions().includes("Prioritize protein") && suggestions().includes("steps remaining"));
+        check("progress bar accessibility values update", doc.querySelector('[aria-label="Daily progress"]').getAttribute("aria-valuenow") === text("terminal-daily-progress").replace("%", ""));
+
+        const failed = checks.filter(function (item) { return !item.pass; }).length;
+        document.getElementById("results").textContent = checks.map(function (item) { return (item.pass ? "PASS " : "FAIL ") + item.name; }).join("\n") + "\n\n" + (failed ? failed + " checks failed" : "All live-update checks passed");
+        document.body.dataset.result = failed ? "fail" : "pass";
+        document.title = failed ? "FAIL dashboard live update" : "PASS dashboard live update";
+      }, { once: true });
+      document.body.appendChild(frame);
+    }());
+  </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>FitCalc responsive UI audit</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 24px; color: #f2f5ff; background: #0b1020; font: 14px/1.5 system-ui,sans-serif; }
+    h1 { margin: 0 0 6px; font-size: 23px; }
+    p { margin: 0 0 16px; color: #a9b4ce; }
+    pre { max-width: 900px; padding: 16px; border: 1px solid #34415e; border-radius: 12px; background: #182238; white-space: pre-wrap; }
+    iframe { position: fixed; top: 0; left: -5000px; display: block; border: 0; background: #0b1020; }
+    [data-result="pass"] { color: #9d83ff; }
+    [data-result="fail"] { color: #ff8d8d; }
+  </style>
+</head>
+<body>
+  <h1>FitCalc responsive UI audit</h1>
+  <p>All 18 routes at 1440, 1200, 1024, 768, 480, 390, and 360 CSS pixels.</p>
+  <pre id="results" role="status" aria-live="polite">Loading responsive route matrix…</pre>
+  <script>
+    (function () {
+      "use strict";
+      var widths = [1440, 1200, 1024, 768, 480, 390, 360];
+      var routes = [
+        ["Home", "../index.html", ".dashboard-page"],
+        ["Nutrition", "../nutrition/", ".nutrition-page"],
+        ["Planner", "../planner/", ".planner-layout"],
+        ["History", "../history/", "#history-list"],
+        ["Profile", "../profile/", "#profile-form"],
+        ["BMI", "../bmi/", ".calc-page"],
+        ["BMR", "../bmr/", ".calc-page"],
+        ["Body fat", "../bodyfat/", ".calc-page"],
+        ["Calories", "../calories/", ".calc-page"],
+        ["Macros", "../macro/", ".calc-page"],
+        ["Workout calories", "../exercisecalories/", ".calc-page"],
+        ["Healthy weight", "../idealweight/", ".calc-page"],
+        ["Heart rate", "../maxhr/", ".calc-page"],
+        ["Protein", "../protein/", ".calc-page"],
+        ["Rest timer", "../resttimer/", ".calc-page"],
+        ["Sleep", "../sleep/", ".calc-page"],
+        ["Step calories", "../steptocalories/", ".calc-page"],
+        ["Water calculator", "../water/", ".calc-page"]
+      ];
+      var expectedNav = "Profile|Home|Nutrition|Planner|History|Tools";
+      var expectedMobileNav = "Profile|Home|Nutrition|Planner|History";
+      var checks = [];
+      var pending = routes.length * widths.length;
+      var done = false;
+      var output = document.getElementById("results");
+      function check(label, condition) {
+        checks.push((condition ? "PASS " : "FAIL ") + label);
+      }
+      function finish() {
+        if (done || pending) return;
+        done = true;
+        var failures = checks.filter(function (line) { return line.indexOf("FAIL ") === 0; }).length;
+        output.textContent = (failures ? failures + " checks failed" : "All responsive UI checks passed") + " · " + checks.length + " assertions\n\n" + checks.join("\n");
+        output.dataset.result = failures ? "fail" : "pass";
+        document.title = failures ? "FAIL FitCalc responsive audit" : "PASS FitCalc responsive audit";
+      }
+      function inspect(route, width, frame) {
+        var label = route[0] + " @ " + width;
+        try {
+          var win = frame.contentWindow;
+          var doc = win.document;
+          check(label + " viewport width", Math.abs(win.innerWidth - width) <= 1);
+          check(label + " screen rendered", !!doc.querySelector(route[2]));
+          check(label + " shared navigation order", Array.prototype.map.call(doc.querySelectorAll(".desktop-nav a"), function (link) { return link.textContent.trim(); }).join("|") === expectedNav);
+          check(label + " no horizontal overflow", Math.max(doc.documentElement.scrollWidth, doc.body.scrollWidth) <= width + 2);
+          var desktopNav = doc.querySelector(".desktop-nav");
+          var bottomNav = doc.querySelector(".bottom-nav");
+          if (width <= 820) {
+            check(label + " mobile navigation layout", win.getComputedStyle(desktopNav).display === "none" && win.getComputedStyle(bottomNav).display === "grid");
+            check(label + " mobile touch targets", doc.querySelector(".menu-toggle").getBoundingClientRect().height >= 40 && bottomNav.getBoundingClientRect().height >= 54);
+            check(label + " mobile navigation order", Array.prototype.map.call(bottomNav.querySelectorAll(".mobile-tab span"), function (item) { return item.textContent.trim(); }).join("|") === expectedMobileNav);
+          } else {
+            check(label + " desktop navigation layout", win.getComputedStyle(desktopNav).display !== "none" && win.getComputedStyle(bottomNav).display === "none");
+          }
+          if (route[1] === "../index.html" && width === 390) {
+            var theme = doc.querySelector(".theme-toggle");
+            var originalTheme = doc.documentElement.dataset.theme;
+            theme.click();
+            check("Home mobile theme switch updates the visual theme", doc.documentElement.dataset.theme !== originalTheme);
+            theme.click();
+            var menuButton = doc.querySelector(".menu-toggle");
+            menuButton.click();
+            check("Home mobile menu opens accessibly", menuButton.getAttribute("aria-expanded") === "true" && !doc.getElementById("mobile-menu").hidden);
+            doc.dispatchEvent(new win.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+            check("Home mobile menu closes with Escape", menuButton.getAttribute("aria-expanded") === "false" && doc.activeElement === menuButton);
+          }
+        } catch (error) {
+          check(label + " audit completed (" + error.message + ")", false);
+        }
+        pending -= 1;
+        finish();
+      }
+      routes.forEach(function (route) {
+        widths.forEach(function (width) {
+          var frame = document.createElement("iframe");
+          frame.title = route[0] + " at " + width + " pixels";
+          frame.style.width = width + "px";
+          frame.style.height = "1000px";
+          frame.addEventListener("load", function () { inspect(route, width, frame); }, { once: true });
+          frame.src = route[1];
+          document.body.appendChild(frame);
+        });
+      });
+      window.setTimeout(function () {
+        if (done) return;
+        var failedLoads = pending;
+        pending = 0;
+        check("all route frames completed before audit timeout", failedLoads === 0);
+        finish();
+      }, 60000);
+    }());
+  </script>
+</body>
+</html>

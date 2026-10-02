@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Track your daily nutrition, workouts and progress with FitCalc.">
+<meta property="og:title" content="FitCalc — Today">
+<meta property="og:description" content="Your nutrition, activity and progress in one place.">
+<meta property="og:type" content="website">
+<title>Today — FitCalc</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700;750;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="main.css">
+<link rel="icon" type="image/png" sizes="32x32" href="build/icon.iconset/icon_32x32.png">
+<link rel="apple-touch-icon" href="build/icon.iconset/icon_128x128.png">
+<meta name="theme-color" content="#0b1020">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html" aria-label="FitCalc home">
+    <span class="brand-mark" aria-hidden="true">+</span>
+    <span>FitCalc</span>
+  </a>
+  <nav class="desktop-nav" aria-label="Main navigation"></nav>
+  <div class="topbar-right">
+    <button class="theme-toggle" type="button" aria-label="Switch to light theme" title="Switch theme"></button>
+    <button class="menu-toggle" id="hamburger-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+<nav class="mobile-menu" id="mobile-menu" aria-label="More navigation" hidden></nav>
+<main>
+  <section class="page-shell dashboard-page">
+    <header class="page-heading dashboard-heading">
+      <div>
+        <p class="welcome-line">Your day at a glance</p>
+        <h1>Today</h1>
+      </div>
+      <time class="today-date" id="today-date"></time>
+    </header>
+
+    <div class="dashboard-layout">
+      <section class="today-terminal" aria-label="Today's FitCalc status">
+        <header class="terminal-chrome">
+          <div class="terminal-prompt"><span class="terminal-light" aria-hidden="true"></span><span>fitcalc@web</span><span class="terminal-path">~ today_status</span></div>
+          <span class="terminal-source">LOCAL DATA</span>
+        </header>
+
+        <div class="terminal-content">
+          <section class="terminal-status" aria-labelledby="daily-overview-title">
+            <div class="terminal-section-heading">
+              <div><span class="terminal-label">01 / TODAY PROGRESS</span><h2 id="daily-overview-title">Status overview</h2></div>
+              <div class="terminal-score"><strong id="terminal-daily-progress">0%</strong><span>complete</span></div>
+            </div>
+            <div class="daily-progress-track" role="progressbar" aria-label="Daily progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <span id="terminal-daily-progress-bar"></span>
+            </div>
+            <p class="terminal-note">Progress uses the nutrition and activity logged for today.</p>
+
+            <div class="dashboard-nutrition-grid" aria-label="Nutrition progress">
+              <div class="dashboard-metric">
+                <div class="dashboard-metric-head"><span>Calories</span><strong><span id="terminal-calories">0</span> / <span id="terminal-calorie-target">0</span> kcal</strong></div>
+                <div class="terminal-progress" role="progressbar" aria-label="Calories" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="terminal-calorie-progress"></span></div>
+              </div>
+              <div class="dashboard-metric">
+                <div class="dashboard-metric-head"><span>Protein</span><strong><span id="terminal-protein">0</span> / <span id="terminal-protein-target">0</span> g</strong></div>
+                <div class="terminal-progress" role="progressbar" aria-label="Protein" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="terminal-protein-progress"></span></div>
+              </div>
+              <div class="dashboard-metric">
+                <div class="dashboard-metric-head"><span>Carbs</span><strong><span id="terminal-carbs">0</span> / <span id="terminal-carbs-target">0</span> g</strong></div>
+                <div class="terminal-progress" role="progressbar" aria-label="Carbohydrates" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="terminal-carbs-progress"></span></div>
+              </div>
+              <div class="dashboard-metric">
+                <div class="dashboard-metric-head"><span>Fat</span><strong><span id="terminal-fat">0</span> / <span id="terminal-fat-target">0</span> g</strong></div>
+                <div class="terminal-progress" role="progressbar" aria-label="Fat" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="terminal-fat-progress"></span></div>
+              </div>
+              <div class="dashboard-metric dashboard-fiber-metric">
+                <div class="dashboard-metric-head"><span>Fiber</span><strong><span id="terminal-fiber">0</span> / <span id="terminal-fiber-target">0</span> g</strong></div>
+                <div class="terminal-progress" role="progressbar" aria-label="Fiber" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="terminal-fiber-progress"></span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="terminal-activity" aria-labelledby="activity-title">
+            <div class="terminal-section-heading terminal-activity-heading">
+              <div><span class="terminal-label">02 / MOVEMENT</span><h2 id="activity-title">Activity</h2></div>
+              <a href="planner/">Open planner <span aria-hidden="true">→</span></a>
+            </div>
+            <div class="terminal-activity-grid">
+              <div class="terminal-activity-item">
+                <div class="activity-row"><div class="activity-copy"><strong>Water</strong><small>Hydration</small></div><div class="activity-value"><span id="terminal-water">0.0</span> / <span id="terminal-water-target">4</span> L</div></div>
+                <div class="terminal-progress" role="progressbar" aria-label="Water" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="terminal-water-progress"></span></div>
+              </div>
+              <div class="terminal-activity-item">
+                <div class="activity-row"><div class="activity-copy"><strong>Steps</strong><small>Movement today</small></div><div class="activity-value"><span id="terminal-steps">0</span> / 10,000</div></div>
+                <div class="terminal-progress" role="progressbar" aria-label="Steps" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="terminal-steps-progress"></span></div>
+              </div>
+              <div class="terminal-activity-item terminal-activity-summary">
+                <div class="activity-row"><div class="activity-copy"><strong>Workouts</strong><small id="terminal-workout-name">None planned</small></div><div class="activity-value" id="terminal-workout">0 / 0</div></div>
+              </div>
+              <div class="terminal-activity-item terminal-activity-summary">
+                <div class="activity-row"><div class="activity-copy"><strong>Tasks</strong><small>Daily planner</small></div><div class="activity-value" id="terminal-tasks">0 / 0</div></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="terminal-priorities" aria-labelledby="adaptive-toggle">
+            <div class="terminal-section-heading terminal-priority-heading">
+              <div><span class="terminal-label">03 / NEXT ACTIONS</span><button type="button" id="adaptive-toggle" class="adaptive-toggle" aria-expanded="true" aria-controls="adaptive-panel">Priority suggestions</button></div>
+            </div>
+            <div id="adaptive-panel" class="adaptive-panel">
+              <div id="adaptive-suggestions" aria-live="polite"></div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <aside class="dashboard-aside">
+        <section class="card dashboard-card" id="dashboard-profile-setup" aria-labelledby="profile-setup-title" hidden>
+          <span class="page-kicker">Get started</span>
+          <h2 id="profile-setup-title">Set your daily targets</h2>
+          <p>Add your profile details to calculate personal calorie and macro targets.</p>
+          <a class="primary-btn" href="profile/">Set up profile <span aria-hidden="true">→</span></a>
+        </section>
+        <section class="card dashboard-card">
+          <div class="dashboard-card-title"><h2>Quick actions</h2></div>
+          <div class="quick-actions">
+            <a class="quick-action" href="nutrition/"><span>Log food or water</span><span aria-hidden="true">→</span></a>
+            <a class="quick-action" href="planner/"><span>Plan activity</span><span aria-hidden="true">→</span></a>
+            <a class="quick-action" href="history/"><span>Review progress</span><span aria-hidden="true">→</span></a>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <section class="calculator-section" id="calculators" aria-labelledby="calculator-heading">
+      <div class="section-heading">
+        <div><span class="section-kicker">FitCalc tools</span><h2 id="calculator-heading">Calculators</h2></div>
+        <p>Standalone estimates for training and nutrition. They do not change your saved targets.</p>
+      </div>
+      <div class="tools-grid">
+        <a class="tool-card featured" href="bmi/"><span class="tool-icon">⚖</span><div class="tool-content"><h3>BMI</h3><p>Body mass index estimate</p></div></a>
+        <a class="tool-card featured" href="calories/"><span class="tool-icon">◉</span><div class="tool-content"><h3>Calories</h3><p>Daily energy estimate</p></div></a>
+        <a class="tool-card" href="macro/"><span class="tool-icon">△</span><div class="tool-content"><h3>Macros</h3><p>Calorie distribution</p></div></a>
+        <a class="tool-card" href="bmr/"><span class="tool-icon">ϟ</span><div class="tool-content"><h3>BMR</h3><p>Resting energy estimate</p></div></a>
+        <a class="tool-card" href="bodyfat/"><span class="tool-icon">⌁</span><div class="tool-content"><h3>Body fat</h3><p>Measurement-based estimate</p></div></a>
+        <a class="tool-card" href="protein/"><span class="tool-icon">＋</span><div class="tool-content"><h3>Protein</h3><p>Daily intake estimate</p></div></a>
+        <a class="tool-card" href="idealweight/"><span class="tool-icon">◇</span><div class="tool-content"><h3>Healthy weight</h3><p>Reference range estimate</p></div></a>
+        <a class="tool-card" href="water/"><span class="tool-icon">≈</span><div class="tool-content"><h3>Water</h3><p>Hydration estimate</p></div></a>
+        <a class="tool-card" href="sleep/"><span class="tool-icon">z</span><div class="tool-content"><h3>Sleep</h3><p>Sleep timing planner</p></div></a>
+        <a class="tool-card" href="maxhr/"><span class="tool-icon">♡</span><div class="tool-content"><h3>Heart rate</h3><p>Maximum and zones</p></div></a>
+        <a class="tool-card" href="steptocalories/"><span class="tool-icon">»</span><div class="tool-content"><h3>Step calories</h3><p>Movement estimate</p></div></a>
+        <a class="tool-card" href="exercisecalories/"><span class="tool-icon">↯</span><div class="tool-content"><h3>Workout calories</h3><p>Exercise energy estimate</p></div></a>
+        <a class="tool-card" href="resttimer/"><span class="tool-icon">◷</span><div class="tool-content"><h3>Rest timer</h3><p>Time your recovery</p></div></a>
+      </div>
+    </section>
+  </section>
+</main>
+<footer class="footer">
+  <div class="footer-brand"><span class="brand-mark">+</span><strong>FitCalc</strong></div>
+  <p>FitCalc stores your tracking data in this browser. Estimates are informational and are not medical advice.</p>
+</footer>
+<script src="constants.js"></script>
+<script src="store.js"></script>
+<script src="script.js"></script>
+<script src="history.js"></script>
+<script src="dashboard.js"></script>
+<script src="adaptive.js"></script>
+</body>
+</html>
